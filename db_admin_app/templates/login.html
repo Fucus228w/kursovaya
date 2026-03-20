@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block page_title %}Вход администратора{% endblock %}
+
+{% block content %}
+<div class="card card--center">
+  <div class="card__header">
+    <span>Вход администратора</span>
+  </div>
+  <div class="card__body">
+    <form method="post" class="form">
+      <label class="label">Имя пользователя</label>
+      <input type="text" name="username" class="input" required>
+
+      <label class="label">Пароль</label>
+      <input type="password" name="password" class="input" required>
+
+      <button type="submit" class="btn btn-primary btn-full">Войти</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

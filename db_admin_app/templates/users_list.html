@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block page_title %}Пользователи{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card__header">
+    <h2>Пользователи</h2>
+    <p class="text-muted">На этой странице можно управлять пользователями активной базы данных: добавлять, изменять и удалять записи.</p>
+  </div>
+
+  <div class="card__body">
+    <div class="toolbar toolbar--row">
+      <div class="toolbar__left">
+        <div class="toolbar__search">
+          <input
+            type="text"
+            id="user-search"
+            class="input"
+            placeholder="Поиск по имени или email..."
+            data-table-id="users-table"
+          >
+        </div>
+        <form method="get" class="toolbar__filters">
+          <label class="label label-inline">Роль:</label>
+          <select name="role" class="input input--sm">
+            <option value="all" {% if role_filter == 'all' %}selected{% endif %}>Все</option>
+            {% for r in roles %}
+              <option value="{{ r.name }}" {% if role_filter == r.name %}selected{% endif %}>
+                {{ r.name }}
+              </option>
+            {% endfor %}
+          </select>
+
+          <label class="label label-inline">Сортировка:</label>
+          <select name="sort" class="input input--sm">
+            <option value="id" {% if sort == 'id' %}selected{% endif %}>ID</option>
+            <option value="name" {% if sort == 'name' %}selected{% endif %}>Имя</option>
+            <option value="email" {% if sort == 'email' %}selected{% endif %}>Email</option>
+          </select>
+
+          <button type="submit" class="btn btn-sm">Применить</button>
+        </form>
+      </div>
+      <div class="toolbar__right">
+        {% if 'admin' in session.roles %}
+          <a class="btn btn-sm" href="{{ url_for('users_export_csv') }}" title="Создать копию списка пользователей в формате CSV">Экспорт CSV</a>
+          <a class="btn btn-primary" href="{{ url_for('user_create') }}" title="Добавить нового пользователя в активную базу данных">Создать пользователя</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="users-table" class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Логин</th>
+            <th>Имя</th>
+            <th>Email</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for u in users %}
+          <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.name }}</td>
+            <td>{{ u.email }}</td>
+            <td class="actions">
+              {% if 'admin' in session.roles %}
+                <a class="btn btn-sm" href="{{ url_for('user_edit', user_id=u.id) }}" title="Изменить данные пользователя">Изменить</a>
+                <form
+                  action="{{ url_for('user_delete', user_id=u.id) }}"
+                  method="post"
+                  style="display:inline;"
+                  onsubmit="return confirm('Удалить пользователя?');"
+                >
+                  <button type="submit" class="btn btn-sm btn-danger" title="Удалить пользователя из базы данных">Удалить</button>
+                </form>
+              {% else %}
+                <span class="text-muted">только просмотр</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <span class="pagination__info">
+        Всего записей: {{ total }}
+      </span>
+
+      <div class="pagination__controls">
+        {% if page > 1 %}
+          <a class="btn btn-sm" href="{{ url_for('users_list', page=page-1, sort=sort, role=role_filter) }}" title="Перейти к предыдущей странице">&laquo; Предыдущая</a>
+        {% endif %}
+
+        {% for p in range(1, total_pages + 1) %}
+          {% if p == page %}
+            <span class="btn btn-sm btn-primary pagination__page--current">{{ p }}</span>
+          {% else %}
+            <a class="btn btn-sm" href="{{ url_for('users_list', page=p, sort=sort, role=role_filter) }}" title="Перейти к странице {{ p }}">{{ p }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if page < total_pages %}
+          <a class="btn btn-sm" href="{{ url_for('users_list', page=page+1, sort=sort, role=role_filter) }}" title="Перейти к следующей странице">Следующая &raquo;</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block page_title %}Роли пользователей{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card__header">
+    <h2>Роли</h2>
+    <p class="text-muted">На этой странице можно назначать и снимать роли пользователей в активной базе данных.</p>
+  </div>
+  <div class="card__body">
+    <p class="text-muted">
+      Отметьте роли, которые должны быть назначены пользователю, и нажмите «Сохранить».
+    </p>
+
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Логин</th>
+            <th>Имя</th>
+            <th>Email</th>
+            <th>Роли</th>
+            <th>Действие</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for u in users %}
+          <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.name }}</td>
+            <td>{{ u.email }}</td>
+            <td>
+              <form method="post" class="form form-inline">
+                <input type="hidden" name="user_id" value="{{ u.id }}">
+                {% for r in roles %}
+                  <label class="checkbox-label">
+                    <input
+                      type="checkbox"
+                      name="roles"
+                      value="{{ r.id }}"
+                      {% if u.id in user_roles_map and r.id in user_roles_map[u.id] %}checked{% endif %}
+                    >
+                    {{ r.name }}
+                  </label>
+                {% endfor %}
+            </td>
+            <td>
+                <button type="submit" class="btn btn-sm btn-primary">
+                  Сохранить
+                </button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

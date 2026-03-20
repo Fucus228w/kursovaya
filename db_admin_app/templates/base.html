@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Администрирование БД</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-theme="light">
+  <header class="topbar">
+    <div class="topbar__left">
+      <span class="topbar__logo">DB Admin</span>
+      {% if session.admin_logged_in %}
+        <span class="topbar__user">
+          {{ session.admin_name }} ({{ session.admin_username }})
+        </span>
+        <span class="topbar__db">
+          Активная БД: {{ current_conn_name }}
+        </span>
+      {% endif %}
+    </div>
+
+    <nav class="topbar__nav">
+      {% if session.admin_logged_in %}
+        <a href="{{ url_for('dashboard') }}"
+           class="topbar__link {% if request.endpoint == 'dashboard' %}topbar__link--active{% endif %}">
+          Обзор
+        </a>
+        <a href="{{ url_for('databases_list') }}"
+           class="topbar__link {% if request.endpoint == 'databases_list' %}topbar__link--active{% endif %}">
+          Базы данных
+        </a>
+        <a href="{{ url_for('users_list') }}"
+           class="topbar__link {% if request.endpoint == 'users_list' %}topbar__link--active{% endif %}">
+          Пользователи
+        </a>
+        {% if 'admin' in session.roles %}
+          <a href="{{ url_for('user_roles_manage') }}"
+             class="topbar__link {% if request.endpoint == 'user_roles_manage' %}topbar__link--active{% endif %}">
+            Роли
+          </a>
+          <a href="{{ url_for('audit_log_view') }}"
+             class="topbar__link {% if request.endpoint == 'audit_log_view' %}topbar__link--active{% endif %}">
+            Журнал
+          </a>
+        {% endif %}
+      {% endif %}
+    </nav>
+
+    <div class="topbar__right">
+      <button id="theme-toggle" class="btn btn-sm" type="button">
+        🌙 Тёмная тема
+      </button>
+      {% if session.admin_logged_in %}
+        <a href="{{ url_for('logout') }}" class="btn btn-sm">Выход</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-sm">Вход</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="content content--wide">
+    <header class="content__header">
+      <h1 class="content__title">
+        {% block page_title %}Панель администрирования{% endblock %}
+      </h1>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-list">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <section class="content__body">
+      {% block content %}{% endblock %}
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>

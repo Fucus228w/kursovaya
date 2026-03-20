@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block page_title %}Базы данных{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card__header">
+    <h2>Базы данных</h2>
+    <p class="text-muted">На этой странице можно управлять подключениями к базам данных: добавлять новые, редактировать существующие и создавать резервные копии.</p>
+  </div>
+
+  <div class="card__body">
+    <div class="toolbar toolbar--row">
+      <div></div>
+      <div class="toolbar__right">
+        <a class="btn btn-primary" href="{{ url_for('database_create') }}" title="Добавить новое подключение к базе данных">Добавить подключение</a>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Тип</th>
+            <th>Путь к файлу</th>
+            <th>Описание</th>
+            <th>Режим</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for conn in connections %}
+          <tr>
+            <td>{{ conn.id }}</td>
+            <td>{{ conn.name }}</td>
+            <td>{{ conn.db_type }}</td>
+            <td>{{ conn.db_path }}</td>
+            <td>{{ conn.description or '-' }}</td>
+            <td>{% if conn.read_only %}Только просмотр{% else %}Чтение и запись{% endif %}</td>
+            <td class="actions">
+              <form method="post" action="{{ url_for('set_active_database', conn_id=conn.id) }}" style="display: inline;">
+                <button type="submit" class="btn btn-sm" title="Сделать эту базу данных активной для работы">Сделать активной</button>
+              </form>
+              <form method="post" action="{{ url_for('connection_backup', conn_id=conn.id) }}" style="display: inline;">
+                <button type="submit" class="btn btn-sm" title="Создать копию файла базы данных">Создать бэкап</button>
+              </form>
+              <a href="{{ url_for('database_edit', conn_id=conn.id) }}" class="btn btn-sm" title="Изменить настройки подключения">Изменить</a>
+              <form method="post" action="{{ url_for('database_delete', conn_id=conn.id) }}" style="display: inline;" onsubmit="return confirm('Удалить подключение?')">
+                <button type="submit" class="btn btn-sm btn-danger" title="Удалить подключение к базе данных">Удалить</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

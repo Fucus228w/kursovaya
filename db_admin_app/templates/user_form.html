@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+  {% if action == "create" %}Создание пользователя{% else %}Редактирование пользователя{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="card card--center">
+  <div class="card__header">
+    <span>
+      {% if action == "create" %}
+        Создание пользователя
+      {% else %}
+        Редактирование пользователя
+      {% endif %}
+    </span>
+  </div>
+  <div class="card__body">
+    <form method="post" class="form">
+      <label class="label">Логин</label>
+      <input
+        type="text"
+        name="username"
+        class="input"
+        value="{{ user.username if user else '' }}"
+        required
+      >
+
+      <label class="label">Пароль{% if user %} (оставьте пустым, чтобы не менять){% endif %}</label>
+      <input
+        type="password"
+        name="password"
+        class="input"
+        placeholder="{{ 'Не изменять' if user else '' }}"
+        {{ 'required' if not user else '' }}
+      >
+
+      <label class="label">Имя</label>
+      <input
+        type="text"
+        name="name"
+        class="input"
+        value="{{ user.name if user else '' }}"
+        required
+      >
+
+      <label class="label">Email</label>
+      <input
+        type="email"
+        name="email"
+        class="input"
+        value="{{ user.email if user else '' }}"
+        required
+      >
+
+      <button type="submit" class="btn btn-primary btn-full">Сохранить</button>
+    </form>
+
+    <a href="{{ url_for('users_list') }}" class="link-back">← Назад к списку</a>
+  </div>
+</div>
+{% endblock %}

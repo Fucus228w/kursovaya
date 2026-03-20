@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block page_title %}Обзор{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card__header">
+    <h2>Обзор</h2>
+    <p class="text-muted">На этой странице отображается общая статистика по подключениям, пользователям и действиям в системе.</p>
+  </div>
+
+  <div class="card__body">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card__number">{{ total_connections }}</div>
+        <div class="stat-card__label">Подключений к БД</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card__number">{{ total_backups }}</div>
+        <div class="stat-card__label">Резервных копий</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card__number">{{ total_users }}</div>
+        <div class="stat-card__label">Пользователей в {{ current_conn_name }}</div>
+      </div>
+
+      {% for role_stat in roles_stats %}
+      <div class="stat-card">
+        <div class="stat-card__number">{{ role_stat.count }}</div>
+        <div class="stat-card__label">Роль "{{ role_stat.name }}"</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card__header">
+    <span>Последние действия</span>
+  </div>
+
+  <div class="card__body">
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Администратор</th>
+            <th>Действие</th>
+            <th>Детали</th>
+            <th>Дата/время</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in recent_logs %}
+          <tr>
+            <td>{{ log.id }}</td>
+            <td>{{ log.admin_username }}</td>
+            <td>{{ log.action }}</td>
+            <td>{{ log.details or '-' }}</td>
+            <td>{{ log.created_at }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

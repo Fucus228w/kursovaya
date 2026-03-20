@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block page_title %}Журнал действий{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card__header">
+    <h2>Журнал</h2>
+    <p class="text-muted">На этой странице отображается история действий администраторов в системе администрирования.</p>
+  </div>
+  <div class="card__body">
+    <p class="text-muted">
+      В таблице отражаются основные операции, выполненные через панель администрирования.
+    </p>
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Администратор</th>
+            <th>Действие</th>
+            <th>Детали</th>
+            <th>Дата и время</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+          <tr>
+            <td>{{ log.id }}</td>
+            <td>{{ log.admin_username }}</td>
+            <td>{{ log.action }}</td>
+            <td>{{ log.details }}</td>
+            <td>{{ log.created_at }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
