@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.secret_key = "very_secret_key_for_session"  # для продакшена — сменить
 
 DB_PATH = "db_web.db"  # дефолтная, но теперь будет выбираться
-ADMIN_DB_PATH = "admin.db"
+ADMIN_DB_PATH = os.path.join(os.path.dirname(__file__), "admin.db")
 USERS_PER_PAGE = 5
 
 
@@ -523,7 +523,7 @@ def dashboard():
             LEFT JOIN user_roles ur ON r.id = ur.role_id
             GROUP BY r.id, r.name
             ORDER BY r.name
-        """ ).fetchall()
+        """).fetchall()
         current_con.close()
 
     return render_template(

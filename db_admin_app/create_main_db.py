@@ -1,10 +1,10 @@
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "test.db")
+DB_PATH = os.path.join(os.path.dirname(__file__), "db_web.db")
 
 
-def init_test_db():
+def init_main_db():
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
 
@@ -74,8 +74,8 @@ def init_test_db():
 
     con.commit()
     con.close()
-    print("Тестовая БД создана и инициализирована.")
+    print("Основная БД создана и инициализирована.")
 
 
 if __name__ == "__main__":
-    init_test_db()
+    init_main_db()

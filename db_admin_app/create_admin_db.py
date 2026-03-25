@@ -1,7 +1,8 @@
 import sqlite3
+import os
 
 # Создание служебной БД для админки
-ADMIN_DB_PATH = "admin.db"
+ADMIN_DB_PATH = os.path.join(os.path.dirname(__file__), "admin.db")
 
 def create_admin_db():
     con = sqlite3.connect(ADMIN_DB_PATH)
@@ -43,20 +44,22 @@ def create_admin_db():
     """)
 
     # Вставим тестовые данные
+    main_db_path = os.path.join(os.path.dirname(__file__), "db_web.db")
+    test_db_path = os.path.join(os.path.dirname(__file__), "test.db")
     con.execute("""
         INSERT OR IGNORE INTO connections (name, db_type, db_path, description, read_only)
-        VALUES ('Основная БД', 'sqlite', 'db_web.db', 'Основная база данных приложения', 0)
-    """)
+        VALUES ('Основная БД', 'sqlite', ?, 'Основная база данных приложения', 0)
+    """, (main_db_path,))
 
     con.execute("""
         INSERT OR IGNORE INTO connections (name, db_type, db_path, description, read_only)
-        VALUES ('Тестовая БД', 'sqlite', 'test.db', 'Тестовая база для экспериментов', 0)
-    """)
+        VALUES ('Тестовая БД', 'sqlite', ?, 'Тестовая база для экспериментов', 0)
+    """, (test_db_path,))
 
     con.execute("""
         INSERT OR IGNORE INTO connections (name, db_type, db_path, description, read_only)
-        VALUES ('БД только чтение', 'sqlite', 'db_web.db', 'Демонстрация режима только чтение', 1)
-    """)
+        VALUES ('БД только чтение', 'sqlite', ?, 'Демонстрация режима только чтение', 1)
+    """, (main_db_path,))
 
     con.commit()
     con.close()
